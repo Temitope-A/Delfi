@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{167B9E5A-00DD-41AF-AC0D-735C9241DB2A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{68333191-DD3D-44BA-A44E-BB8C9E10CFB8}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Delfi.QueryProvider", "src\Delfi.QueryProvider\Delfi.QueryProvider.xproj", "{2AD10E01-2F39-4352-B3C4-8CF1DCFA432A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Delfi.Test", "test\Delfi.Test\Delfi.Test.xproj", "{FB22A67D-AEBE-4BEE-8611-9D4B68D9D00A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Delfi.EntityFramework", "src\Delfi.EntityFramework\Delfi.EntityFramework.xproj", "{930395DC-CE41-4524-B2DC-27346527080F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2AD10E01-2F39-4352-B3C4-8CF1DCFA432A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AD10E01-2F39-4352-B3C4-8CF1DCFA432A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AD10E01-2F39-4352-B3C4-8CF1DCFA432A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AD10E01-2F39-4352-B3C4-8CF1DCFA432A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB22A67D-AEBE-4BEE-8611-9D4B68D9D00A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB22A67D-AEBE-4BEE-8611-9D4B68D9D00A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB22A67D-AEBE-4BEE-8611-9D4B68D9D00A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB22A67D-AEBE-4BEE-8611-9D4B68D9D00A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{930395DC-CE41-4524-B2DC-27346527080F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{930395DC-CE41-4524-B2DC-27346527080F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{930395DC-CE41-4524-B2DC-27346527080F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{930395DC-CE41-4524-B2DC-27346527080F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2AD10E01-2F39-4352-B3C4-8CF1DCFA432A} = {167B9E5A-00DD-41AF-AC0D-735C9241DB2A}
+		{FB22A67D-AEBE-4BEE-8611-9D4B68D9D00A} = {167B9E5A-00DD-41AF-AC0D-735C9241DB2A}
+		{930395DC-CE41-4524-B2DC-27346527080F} = {167B9E5A-00DD-41AF-AC0D-735C9241DB2A}
+	EndGlobalSection
+EndGlobal
