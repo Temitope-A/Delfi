@@ -1,8 +1,11 @@
 {
-  "title": "Delfi.QueryProvider",
+  "name": "Delfi.QueryProvider",
+  "title": "Delfi QueryProvider",
+  "authors": [ "Temitope Ajileye" ],
+  "language": "en-GB",
   "copyright": "MIT",
-  "description": "Graph Database Access Layer",
-  "version": "0.1.6",
+  "description": "Graph Database Query Provider",
+  "version": "0.2.0",
 
   "dependencies": {
     "Microsoft.Extensions.Configuration": "1.0.0",
@@ -19,10 +22,22 @@
       "imports": "dnxcore50"
     }
   },
+  
 
   "scripts": {
     "postcompile": [
       "dotnet pack --no-build --configuration %compile:Configuration%"
     ]
+  },
+
+  "buildOptions": {
+    "xmlDoc": true
+  },
+
+  "packOptions": {
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Temitope-A/Delfi"
+    }
   }
 }

@@ -1,16 +1,38 @@
 ﻿{
-  "version": "1.0.0-*",
+  "name": "Delfi.EntityFramework",
+  "title": "Delfi EntityFramework",
+  "authors": [ "Temitope Ajileye" ],
+  "language": "en-GB",
+  "copyright": "MIT",
+  "description": "Graph Database Entity Framework",
+  "version": "0.1.0",
 
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
     "Delfi.QueryProvider": {
       "target": "project"
     }
   },
 
   "frameworks": {
-    "netstandard1.6": {
+    "netstandard1.5": {
       "imports": "dnxcore50"
+    }
+  },
+
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --configuration %compile:Configuration%"
+    ]
+  },
+
+  "buildOptions": {
+    "xmlDoc": true
+  },
+
+  "packOptions": {
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Temitope-A/Delfi"
     }
   }
 }

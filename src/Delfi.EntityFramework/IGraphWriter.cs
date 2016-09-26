@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Delfi.EntityFramework
 {
-    public interface IGraphUpdater
+    public interface IGraphWriter
     {
         void Insert(IEnumerable<Statement> statements);
 

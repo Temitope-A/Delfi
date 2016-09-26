@@ -23,9 +23,9 @@ namespace Delfi.QueryProvider
         /// Constructor
         /// </summary>
         /// <param name="evaluator"></param>
-        public GraphProvider(IGraphSource source = null)
+        public GraphProvider(IGraphSource source)
         {
-            DefaultSource = source ?? new GraphSource(Configuration.Instance.EndPoint);
+            DefaultSource = source;
         }
 
         /// <summary>

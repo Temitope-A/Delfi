@@ -43,26 +43,13 @@ namespace Delfi.QueryProvider
         /// <summary>
         /// Get the configured RDF namespaces
         /// </summary>
-        public List<NamespaceDeclaration> Namespaces => GetNamespaces();
+        public List<NamespaceDeclaration> Namespaces {
+            get {
+                var result = new List<NamespaceDeclaration>();
+                _configurationRoot.GetSection("namespaces").Bind(result);
 
-        /// <summary>
-        /// Get the SPARQL endpoint
-        /// </summary>
-        public string EndPoint => GetEndPoint();
-
-
-        private string GetEndPoint()
-        {
-            return _configurationRoot.GetSection("endpoint").Value;
-        }
-
-        private List<NamespaceDeclaration> GetNamespaces()
-        {
-            
-            var result = new List<NamespaceDeclaration>();
-            _configurationRoot.GetSection("namespaces").Bind(result);
-
-            return result;
+                return result;
+            }
         }
     }
 }

@@ -1,20 +1,14 @@
-﻿using Delfi.QueryProvider.EndPointClients.SparqlJson;
-using Delfi.QueryProvider.Exceptions;
-using Newtonsoft.Json;
-using Sparql.Algebra.Rows;
+﻿using Delfi.QueryProvider.Exceptions;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 
-namespace Delfi.QueryProvider.EndPointClients
+namespace Delfi.EntityFramework
 {
     /// <summary>
-    /// Executes a query against a sparql endpoint and returns results via json 
+    /// 
     /// </summary>
-    public class SparqlJsonClient
+    public class UpdateClient
     {
-        private SparqlJsonResponse _jsonResponse;
-
         /// <summary>
         /// Sends a POST request, with the query unencoded as the content body
         /// </summary>
@@ -30,7 +24,7 @@ namespace Delfi.QueryProvider.EndPointClients
                 HttpRequestMessage request = new HttpRequestMessage();
                 request.Method = HttpMethod.Post;
                 request.Content = new StringContent(query);
-                request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/sparql-query");
+                request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/sparql-update");
                 request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/sparql-results+json"));
 
                 var task = client.SendAsync(request);
@@ -39,7 +33,7 @@ namespace Delfi.QueryProvider.EndPointClients
                 {
                     task.Wait();
                 }
-                catch(HttpRequestException ex)
+                catch (HttpRequestException ex)
                 {
                     throw new EndpointException($"Connection to the enpoint {baseUri} failed. Check your network status or contact the endpoint owner", ex);
                 }
@@ -52,46 +46,12 @@ namespace Delfi.QueryProvider.EndPointClients
 
                 var resultString = readTask.Result;
 
-                if (statusCode != System.Net.HttpStatusCode.OK)
+                if (statusCode != System.Net.HttpStatusCode.NoContent)
                 {
                     var queryError = new BadQueryException(resultString);
                     throw new EndpointException($"{statusCode}. The query is malformed or the end point was unable to execute it. Check InnerException for details", queryError);
                 }
-                else
-                {
-                    _jsonResponse = JsonConvert.DeserializeObject<SparqlJsonResponse>(resultString);
-                }                
             }
-        }
-
-        public IEnumerable<IMultiSetRow> GetResults()
-        {
-            yield return new SignatureRow(_jsonResponse.Head.Vars);
-
-            foreach (var solution in _jsonResponse.Results.Bindings)
-            {
-                yield return CreateResultRow(solution, _jsonResponse.Head.Vars);
-            }
-        }
-
-        private ResultRow CreateResultRow(Dictionary<string, Binding> solution, string[] Headers)
-        {
-            var resultDict = new Dictionary<string, object>();
-
-            foreach (var header in Headers)
-            {
-                Binding x;
-                if (solution.TryGetValue(header, out x))
-                {
-                    resultDict.Add(header, x.value);
-                }
-                else
-                {
-                    resultDict.Add(header, null);
-                }
-            }
-
-            return new ResultRow(resultDict);
         }
     }
 }
