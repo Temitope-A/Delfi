@@ -21,7 +21,8 @@
 
   "scripts": {
     "postcompile": [
-      "dotnet pack --no-build --configuration %compile:Configuration%"
+      //"dotnet pack --no-build --configuration %compile:Configuration%"
+      "dotnet pack --output C:\\Users\\Temitope.A\\Documents\\LocalPackages --no-build --configuration %compile:Configuration%"
     ]
   },
 

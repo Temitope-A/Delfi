@@ -1,6 +1,7 @@
-﻿using Delfi.QueryProvider.Tree;
-using Sparql.Algebra.GraphSources;
+﻿using Sparql.Algebra.GraphSources;
 using System.Collections.Generic;
+using Sparql.Algebra.Trees;
+using Sparql.Algebra.RDF;
 
 namespace Delfi.QueryProvider
 {
@@ -15,6 +16,6 @@ namespace Delfi.QueryProvider
         /// <param name="graphExpression"></param>
         /// <param name="source"></param>
         /// <returns></returns>
-        IEnumerable<TreeNode<object>> Execute(GraphExpression graphExpression, IGraphSource source = null);
+        IEnumerable<LabelledTreeNode<object, Term>> Execute(GraphExpression graphExpression, IGraphSource source = null);
     }
 }

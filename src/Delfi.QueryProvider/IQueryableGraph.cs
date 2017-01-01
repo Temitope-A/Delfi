@@ -1,6 +1,6 @@
 ﻿using Delfi.QueryProvider.RDF;
-using System.Collections.Generic;
 using System.Collections;
+using Sparql.Algebra.RDF;
 
 namespace Delfi.QueryProvider
 {
@@ -30,6 +30,16 @@ namespace Delfi.QueryProvider
         IQueryableGraph Expand(Resource property, Term @object = null);
 
         /// <summary>
+        /// Expands the graph expression with the specified property and query.
+        /// The new graph expression will bind a given context if and only if the old expression binds,
+        /// while the expansion is allowed not to bind
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        IQueryableGraph Expand(Resource property, IQueryableGraph query);
+
+        /// <summary>
         /// Expands the graph expression with the specified property and object.
         /// The new graph expression will bind a given context if and only if both the old expression and the addition bind 
         /// </summary>
@@ -39,18 +49,18 @@ namespace Delfi.QueryProvider
         IQueryableGraph Require(Resource property, Term @object = null);
 
         /// <summary>
-        /// Restricts the graph expression to the specified object object.
-        /// The new graph expresson will bind a given context if and only if both the old expression and the addition bind
+        /// Expands the graph expression with the specified property and query.
+        /// The new graph expression will bind a given context if and only if both the old expression and the addition bind 
         /// </summary>
-        /// <param name="property">property that links the target node to the current head node</param>
-        /// <param name="object"></param>
+        /// <param name="property"></param>
+        /// <param name="query"></param>
         /// <returns>a queryable graph</returns>
-        IQueryableGraph Select(Resource property, Term @object = null);
+        IQueryableGraph Require(Resource property, IQueryableGraph query);
 
         /// <summary>
         /// Returns the union of two queries, the graph expressions are left unaltered. 
         /// </summary>
-        /// <param name="union"></param>
+        /// <param name="query"></param>
         /// <returns>a queryable graph</returns>
         IQueryableGraph Union(IQueryableGraph query);
 
@@ -60,12 +70,5 @@ namespace Delfi.QueryProvider
         /// <param name="count">maximum number of elements to return</param>
         /// <returns>a queryable graph</returns>
         IQueryableGraph Limit(int count);
-
-        /// <summary>
-        /// Filter the results by including only those which match the given basic graph pattern
-        /// </summary>
-        /// <param name="statementList">represents the basic graph pattern to which the results will be compared</param>
-        /// <returns>a queryable graph</returns>
-        IQueryableGraph Match(IEnumerable<Statement> statementList);
     }
 }

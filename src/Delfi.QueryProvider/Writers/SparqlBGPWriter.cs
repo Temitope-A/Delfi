@@ -1,29 +1,23 @@
-﻿using Delfi.QueryProvider.RDF;
-using System.Collections.Generic;
+﻿using Sparql.Algebra.Trees;
+using Sparql.Algebra.RDF;
 
 namespace Delfi.QueryProvider.Writers
 {
-    public class SparqlBGPWriter
+    /// <summary>
+    ///Sparql query writer
+    /// </summary>
+    public class SparqlBgpWriter
     {
         /// <summary>
-        /// Converts a list of statements (triple patterns) into a sparql query 
+        /// Converts a tree query model into a sparql query 
         /// </summary>
-        /// <param name="statementList"></param>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        public static string Write(IEnumerable<Statement> statementList, int? offset = null, int? limit = null)
+        public static string Write(LabelledTreeNode<object, Term> queryModel, int? offset = null, int? limit = null)
         {
             var template = "SELECT * WHERE {{ {0} }} {1} {2}";
 
-            var whereBody = "";
+            var whereBody = ConvertQueryModelToSparql(queryModel);
             var limitBody = "";
             var offsetBody = "";
-
-            foreach (var statement in statementList)
-            {
-                whereBody += statement.ToString() + "."; 
-            }
 
             if (limit.HasValue)
             {
@@ -36,6 +30,21 @@ namespace Delfi.QueryProvider.Writers
             }
 
             return string.Format(template, whereBody, limitBody, offsetBody);
+        }
+
+        /// <summary>
+        /// Converts a tree query model into a bgp graph pattern
+        /// </summary>
+        public static string ConvertQueryModelToSparql(LabelledTreeNode<object, Term> queryModel)
+        {
+            string result = "";
+
+            foreach (var child in queryModel.Children)
+            {
+                result += string.Format(" {0} {1} {2}.", queryModel.Data, child.Key, child.Value.Data) + ConvertQueryModelToSparql(child.Value);
+            }
+
+            return result;
         }
     }
 }

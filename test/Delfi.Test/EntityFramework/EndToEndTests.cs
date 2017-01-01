@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using Delfi.QueryProvider;
 using Delfi.QueryProvider.RDF;
 using Delfi.QueryProvider.Attributes;
 using Delfi.QueryProvider.Tree;
@@ -15,11 +14,9 @@ namespace Delfi.Test
         [Fact]
         public void Read()
         {             
-            IQueryableGraph graph = Context.Read<RdfProperty>();
-
             int i = 0;
 
-            foreach (TreeNode<object> component in graph)
+            foreach (TreeNode<object> component in Context.Read<RdfProperty>())
             {
                 i++;
             }
@@ -30,17 +27,43 @@ namespace Delfi.Test
         [Fact]
         public void Write()
         {
-            Context.Append(new Statement(new Rdf("test2"), new Rdf("type"), new Rdf("Property")));
-            Context.SaveChanges();
+            var statement = new Statement(new Rdf("test3"), new Rdf("type"), new Rdf("Property"));
+            var graph = Context.Read<RdfProperty>();
 
             int i = 0;
 
-            foreach (TreeNode<object> component in Context.Read<RdfsClass>())
+            foreach (TreeNode<object> component in graph )
             {
                 i++;
             }
 
-            Assert.Equal(2759, i);
+            var countBeforeAdd = i;
+
+            Context.Append(statement);
+            Context.SaveChanges();
+
+            i = 0;
+
+            foreach (TreeNode<object> component in graph)
+            {
+                i++;
+            }
+
+            var countAfterAdd = i;
+
+            Context.Remove(statement);
+            Context.SaveChanges();
+
+            foreach (TreeNode<object> component in graph)
+            {
+                i++;
+            }
+
+            var countAfterDelete = i;
+
+            Assert.Equal(countBeforeAdd, countAfterDelete);
+
+            Assert.Equal(countBeforeAdd + 1, countAfterAdd);
         }
     }
 

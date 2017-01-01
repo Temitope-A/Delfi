@@ -1,51 +1,63 @@
 ﻿using Delfi.QueryProvider.EndPointClients;
-using Delfi.QueryProvider.RDF;
+using Delfi.QueryProvider.EndPointClients.SparqlJson;
 using Delfi.QueryProvider.Writers;
-using Sparql.Algebra.Evaluators;
+using Sparql.Algebra.GraphEvaluators;
 using Sparql.Algebra.GraphSources;
-using Sparql.Algebra.Rows;
+using Sparql.Algebra.RDF;
+using Sparql.Algebra.Trees;
 using System;
 using System.Collections.Generic;
 
 namespace Delfi.QueryProvider.Evaluators
 {
-    public class SparqlBGPEvaluator:IEvaluator
+    /// <summary>
+    /// Sparql evatuator
+    /// </summary>
+    public class SparqlBgpEvaluator:IEvaluator
     {
-        private Guid _id;
+        private readonly Guid _id;
 
-        public IGraphSource Source { get; }
-
-        public SparqlBGPEvaluator(IGraphSource source)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public SparqlBgpEvaluator()
         {
-            Source = source;
             _id = Guid.NewGuid();
         }
 
         /// <summary>
-        /// Evaluates the query generated from sparql triple patterns against a sparql endpoint
+        /// Evaluates a graph query model against a graph source
         /// </summary>
-        /// <param name="inputList"></param>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        public IEnumerable<IMultiSetRow> Evaluate(IEnumerable<object> inputList, int? offset, int? limit)
+        /// <param name="queryModel">tree model of the query</param>
+        /// <param name="offset">number of solutions to skip</param>
+        /// <param name="limit">maximum number of solutions to take</param>
+        /// <param name="source">query target</param>
+        /// <returns>A collection of trees</returns>
+        public IEnumerable<LabelledTreeNode<object, Term>> Evaluate(LabelledTreeNode<object, Term> queryModel, int? offset, int? limit, IGraphSource source)
         {
-            var statementList = new List<Statement>();
-
-            foreach (var item in inputList)
-            {
-                statementList.Add((Statement)item);
-            }
-
-            string query = SparqlBGPWriter.Write(statementList, offset, limit);
-
+            var queryString = SparqlBgpWriter.Write(queryModel, offset, limit);
             var client = new SparqlJsonClient();
-            client.ExecuteQuery(query, Source.EndPoint);
+            var responseModel = client.ExecuteQuery(queryString, source.EndPoint);
 
-            foreach (var item in client.GetResults())
+            foreach (var solution in responseModel.Results.Bindings)
             {
-                yield return item;
-            }
+                yield return CreateResultGraph(solution, queryModel);
+            }            
         }
+
+
+        private LabelledTreeNode<object, Term> CreateResultGraph(Dictionary<string, Binding> solution, LabelledTreeNode<object, Term> queryModel)
+        {
+            var result = queryModel.Copy();
+
+            foreach (var pair in solution)
+            {
+                //find node with given id
+                //node.data = pair.Value
+            }
+
+            return result;
+        }
+
     }
 }

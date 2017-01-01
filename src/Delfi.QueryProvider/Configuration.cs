@@ -1,7 +1,7 @@
-﻿using Delfi.QueryProvider.RDF;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using Delfi.QueryProvider.RDF;
 
 namespace Delfi.QueryProvider
 {

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Sparql.Algebra.RDF;
 
 namespace Delfi.QueryProvider.RDF
 {

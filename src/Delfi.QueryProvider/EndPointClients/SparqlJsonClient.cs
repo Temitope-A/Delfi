@@ -1,9 +1,7 @@
 ﻿using Delfi.QueryProvider.EndPointClients.SparqlJson;
 using Delfi.QueryProvider.Exceptions;
 using Newtonsoft.Json;
-using Sparql.Algebra.Rows;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 
 namespace Delfi.QueryProvider.EndPointClients
@@ -13,15 +11,13 @@ namespace Delfi.QueryProvider.EndPointClients
     /// </summary>
     public class SparqlJsonClient
     {
-        private SparqlJsonResponse _jsonResponse;
-
         /// <summary>
         /// Sends a POST request, with the query unencoded as the content body
         /// </summary>
         /// <param name="query">query</param>
         /// <param name="baseUri">base uri</param>
         /// <returns></returns>
-        public void ExecuteQuery(string query, Uri baseUri)
+        public SparqlJsonResponse ExecuteQuery(string query, Uri baseUri)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -59,39 +55,9 @@ namespace Delfi.QueryProvider.EndPointClients
                 }
                 else
                 {
-                    _jsonResponse = JsonConvert.DeserializeObject<SparqlJsonResponse>(resultString);
+                    return JsonConvert.DeserializeObject<SparqlJsonResponse>(resultString);
                 }                
             }
-        }
-
-        public IEnumerable<IMultiSetRow> GetResults()
-        {
-            yield return new SignatureRow(_jsonResponse.Head.Vars);
-
-            foreach (var solution in _jsonResponse.Results.Bindings)
-            {
-                yield return CreateResultRow(solution, _jsonResponse.Head.Vars);
-            }
-        }
-
-        private ResultRow CreateResultRow(Dictionary<string, Binding> solution, string[] Headers)
-        {
-            var resultDict = new Dictionary<string, object>();
-
-            foreach (var header in Headers)
-            {
-                Binding x;
-                if (solution.TryGetValue(header, out x))
-                {
-                    resultDict.Add(header, x.value);
-                }
-                else
-                {
-                    resultDict.Add(header, null);
-                }
-            }
-
-            return new ResultRow(resultDict);
         }
     }
 }

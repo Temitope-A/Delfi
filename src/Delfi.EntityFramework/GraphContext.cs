@@ -30,7 +30,7 @@ namespace Delfi.EntityFramework
         /// </summary>
         public GraphContext()
         {
-            GraphProvider = new GraphProvider<SparqlBGPEvaluator>(Configuration.Instance.QueryEndpoint);
+            GraphProvider = new GraphProvider<SparqlBgpEvaluator>(Configuration.Instance.QueryEndpoint);
             GraphWriter = new GraphWriter(Configuration.Instance.UpdateEndpoint);
             _toAdd = new List<Statement>();
             _toDelete = new List<Statement>();

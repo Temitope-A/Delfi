@@ -1,6 +1,7 @@
-﻿using Delfi.QueryProvider.Attributes;
-using System;
+﻿using System;
 using System.Reflection;
+using Delfi.QueryProvider.Attributes;
+using Sparql.Algebra.RDF;
 
 namespace Delfi.QueryProvider.RDF
 {
