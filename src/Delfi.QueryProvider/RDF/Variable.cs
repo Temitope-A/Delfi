@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection;
-using Delfi.QueryProvider.Attributes;
 using Sparql.Algebra.RDF;
 
 namespace Delfi.QueryProvider.RDF
@@ -10,20 +8,16 @@ namespace Delfi.QueryProvider.RDF
     /// </summary>
     public class Variable : Term
     {
-        public Resource ResourceType { get {return GetResourceType(); } }
-
-        public bool IsResourceInternal { get { return Id.Contains("·"); } }
-
-        public Type Type { get; }
-
+        /// <summary>
+        /// Variable identifier
+        /// </summary>
         public string Id { get; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="name"></param>
         public Variable (string name = null)
-        {
-            
-        }
-
-        public Variable (Type underlyingResourceType, string name = null)
         {
             if (name == null)
             {
@@ -33,25 +27,14 @@ namespace Delfi.QueryProvider.RDF
             {
                 Id = name;
             }
-
-            Type = underlyingResourceType;
         }
-
+        /// <summary>
+        /// Returns a string representation of the variable
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "?" + Id;
-        }
-
-        private Resource GetResourceType()
-        {
-            var attr = Type.GetTypeInfo().GetCustomAttribute<EntityBindAttribute>();
-
-            if (attr != null)
-            {
-                return attr.Type;
-            }
-
-            return null;
         }
     }
 }

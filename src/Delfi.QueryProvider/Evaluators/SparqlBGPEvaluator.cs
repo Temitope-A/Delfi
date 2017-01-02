@@ -1,5 +1,6 @@
 ﻿using Delfi.QueryProvider.EndPointClients;
 using Delfi.QueryProvider.EndPointClients.SparqlJson;
+using Delfi.QueryProvider.RDF;
 using Delfi.QueryProvider.Writers;
 using Sparql.Algebra.GraphEvaluators;
 using Sparql.Algebra.GraphSources;
@@ -48,16 +49,30 @@ namespace Delfi.QueryProvider.Evaluators
 
         private LabelledTreeNode<object, Term> CreateResultGraph(Dictionary<string, Binding> solution, LabelledTreeNode<object, Term> queryModel)
         {
-            var result = queryModel.Copy();
+            TreeNodeVisitor<object, object> visitor = (object nodeData) => ResolveNode(nodeData, solution);
 
-            foreach (var pair in solution)
-            {
-                //find node with given id
-                //node.data = pair.Value
-            }
+            var result = queryModel.Copy().Traverse(visitor);
 
             return result;
         }
 
+        private object ResolveNode(object inputNodeData, Dictionary<string, Binding> solutionSet)
+        {
+            var variable = inputNodeData as Variable;
+
+            return variable == null ? inputNodeData : ResolveNode(variable, solutionSet);
+        }
+
+        private object ResolveNode(Variable inputNodeData, Dictionary<string, Binding> solutionSet)
+        {
+            if (solutionSet.ContainsKey(inputNodeData.Id))
+            {
+                object value = solutionSet[inputNodeData.Id].value;
+
+                return value;
+            }
+
+            return inputNodeData;
+        }
     }
 }

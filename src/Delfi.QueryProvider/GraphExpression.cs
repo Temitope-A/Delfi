@@ -32,21 +32,21 @@ namespace Delfi.QueryProvider
 
         #region Life Cycle
         /// <summary>
-        /// Public constructor
+        /// Public constructor with constant initializer
         /// </summary>
         public GraphExpression(Term root)
         {
             Root = root;
-            var variable = root as Variable;
+            Map = new ConstantMap(new LabelledTreeNode<object, Term>(root));
+        }
 
-            if (variable != null)
-            {              
-                Map = FillObjectGraph(variable, Map);
-            }
-            else
-            {
-                Map = new ConstantMap(new LabelledTreeNode<object, Term>(root));
-            }          
+        /// <summary>
+        /// Public constructor with query model initializer
+        /// </summary>
+        public GraphExpression(LabelledTreeNode<object, Term> queryModel)
+        {
+            Root = (Term)queryModel.Data;
+            Map = new BgpMap(queryModel);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Delfi.QueryProvider
         /// <returns></returns>
         public GraphExpression LeftJoin(Resource property, GraphExpression expression)
         {
-            var result = CreateJoinedMap(property, @object);
+            var result = CreateJoinedMap(property, expression);
             return new GraphExpression(new LeftJoinMap(Map, result.Map, result.AddressPairList));
         }
 
@@ -110,7 +110,7 @@ namespace Delfi.QueryProvider
         /// <returns></returns>
         public GraphExpression Join(Resource property, GraphExpression expression)
         {
-            var result = CreateJoinedMap(property, @object);
+            var result = CreateJoinedMap(property, expression);
             return new GraphExpression(new JoinMap(Map, result.Map, result.AddressPairList));
         }
 
@@ -137,43 +137,6 @@ namespace Delfi.QueryProvider
 
         #region Private Methods
 
-        private IMap FillObjectGraph(Variable variable, IMap map)
-        {
-            if (variable.ResourceType != null)
-            {
-                
-            }
-
-            var bindableProperties = type.GetRuntimeProperties().Where(p => p.GetCustomAttribute<PropertyBindAttribute>() != null);
-
-            //List<PropertyInfo> requiredProperties = new List<PropertyInfo>();
-            //List<PropertyInfo> optionalProperties = new List<PropertyInfo>();
-
-            foreach (var prop in bindableProperties)
-            {
-                var predicate = prop.GetCustomAttribute<PropertyBindAttribute>().Property;
-                var @object = new Variable(prop.PropertyType, node.Data.Id + "·" + prop.Name);
-
-                var comparisonSites = new List<JoinAddressPair>
-                {
-                    new JoinAddressPair {TreeAddress1 = new List<Term>(), TreeAddress2 = new List<Term>()}
-                };
-
-                if (prop.GetCustomAttribute<RequiredAttribute>() != null)
-                {
-                    map = new LeftJoinMap(map, new BgpMap(new Statement(node.Data, predicate, @object).ToGraph(), 0, 1), comparisonSites);
-                }
-                else
-                {
-                    map = new JoinMap(map, new BgpMap(new Statement(node.Data, predicate, @object).ToGraph(), 0, 1), comparisonSites);
-                }
-            }
-
-            return map;
-        }
-
-        
-
         // Helper method to compute expression joins
         private JoinedMapResult CreateJoinedMap(Resource property, Term @object)
         {
@@ -181,17 +144,21 @@ namespace Delfi.QueryProvider
             var joinSegment = new LabelledTreeNode<object, Term>(Root).AddChild(property, @object);
             IMap joinedMap = new BgpMap(joinSegment);
 
-            var variable = @object as Variable;
-            if (variable != null)
-            {
-                joinedMap = FillObjectGraph(variable, joinedMap);
-            }
+            var comparisonSites = new List<JoinAddressPair> { JoinAddressPair.RootComparison };
 
-            var comparisonSites = new List<JoinAddressPair>
-            {
-                new JoinAddressPair {TreeAddress1 = new List<Term>(), TreeAddress2 = new List<Term>()}
-            };
             return new JoinedMapResult { Map = joinedMap, AddressPairList = comparisonSites};
+        }
+
+        // Helper method to compute expression joins
+        private JoinedMapResult CreateJoinedMap(Resource property, GraphExpression expression)
+        {
+            var joinSegment = new LabelledTreeNode<object, Term>(Root).AddChild(property, expression.Root);
+            var joineMapComparisonSites = new List<JoinAddressPair> { new JoinAddressPair { TreeAddress1 = new List<Term> { property }, TreeAddress2 = new List<Term>() } };
+            IMap joinedMap = new JoinMap(new BgpMap(joinSegment), expression.Map,  joineMapComparisonSites);
+
+            var comparisonSites = new List<JoinAddressPair> { JoinAddressPair.RootComparison };
+
+            return new JoinedMapResult { Map = joinedMap, AddressPairList = comparisonSites };
         }
 
         #endregion

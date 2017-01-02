@@ -41,7 +41,7 @@ namespace Delfi.QueryProvider.Writers
 
             foreach (var child in queryModel.Children)
             {
-                result += string.Format(" {0} {1} {2}.", queryModel.Data, child.Key, child.Value.Data) + ConvertQueryModelToSparql(child.Value);
+                result += string.Format(" {0} {1} {2}.", queryModel.Data, child.Edge, child.TerminalNode.Data) + ConvertQueryModelToSparql(child.TerminalNode);
             }
 
             return result;
