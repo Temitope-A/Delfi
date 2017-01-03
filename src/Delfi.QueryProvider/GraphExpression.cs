@@ -1,12 +1,9 @@
-﻿using Delfi.QueryProvider.Attributes;
-using Delfi.QueryProvider.RDF;
+﻿using Delfi.QueryProvider.RDF;
 using Sparql.Algebra;
 using Sparql.Algebra.Maps;
 using Sparql.Algebra.RDF;
 using Sparql.Algebra.Trees;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace Delfi.QueryProvider
 {
@@ -123,7 +120,7 @@ namespace Delfi.QueryProvider
         public GraphExpression Select(Resource property, Term @object)
         {
             var result = CreateJoinedMap(property, @object);
-            return new GraphExpression(new JoinMap(Map, result.Map, result.AddressPairList));
+            return new GraphExpression(new SelectMap(Map, result.Map, result.AddressPairList));
         }
 
         /// <summary>
@@ -135,7 +132,7 @@ namespace Delfi.QueryProvider
         public GraphExpression Select(Resource property, GraphExpression expression)
         {
             var result = CreateJoinedMap(property, expression);
-            return new GraphExpression(new JoinMap(Map, result.Map, result.AddressPairList));
+            return new GraphExpression(new SelectMap(Map, result.Map, result.AddressPairList));
         }
 
         /// <summary>

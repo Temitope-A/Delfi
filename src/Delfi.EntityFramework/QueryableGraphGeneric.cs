@@ -1,7 +1,10 @@
 ﻿using Delfi.QueryProvider;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Delfi.EntityFramework.Attributes;
 using Delfi.QueryProvider.RDF;
+using Delfi.QueryProvider.StandardNamespaces;
 using Sparql.Algebra.Trees;
 using Sparql.Algebra.RDF;
 
@@ -39,7 +42,7 @@ namespace Delfi.EntityFramework
             TypeGraph = typeGraph;
         }
 
-        public new IQueryableGraph<T> Expand<Y>(Resource property)
+        public IQueryableGraph<T> Expand<Y>(Resource property)
         {
             TypeGraph.AddChild(property, typeof(Y));
 
@@ -48,7 +51,7 @@ namespace Delfi.EntityFramework
             return new QueryableGraph<T>(GraphProvider, query.GraphExpression, TypeGraph);
         }
 
-        public new IQueryableGraph<T> Require<Y>(Resource property)
+        public IQueryableGraph<T> Require<Y>(Resource property)
         {
             TypeGraph.AddChild(property, typeof(Y));
 
@@ -65,8 +68,9 @@ namespace Delfi.EntityFramework
 
         public IQueryableGraph<Y> Select<Y>(Resource property)
         {
-            var objectGraph = CreateObjectGraph(typeof(Y));
-            throw new NotImplementedException();
+            var joinedQuery = Select<Y>();
+            var query = Select(property, joinedQuery);
+            return new QueryableGraph<Y>(GraphProvider, query.GraphExpression);
         }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
@@ -74,9 +78,25 @@ namespace Delfi.EntityFramework
             throw new NotImplementedException();
         }
 
-        private LabelledTreeNode<object, Term> CreateObjectGraph(Type ojjectType)
+        private LabelledTreeNode<object, Term> CreateObjectGraph(Type objectType)
         {
-            throw new NotImplementedException();
+            var resourceType = objectType.GetTypeInfo().GetCustomAttribute<EntityBindAttribute>().Type;
+
+            var graph = new LabelledTreeNode<object, Term>(new Variable());
+            graph.AddChild(new Rdf("type"), resourceType);
+
+            foreach (var prop in objectType.GetRuntimeProperties())
+            {
+                var memberType = prop.PropertyType.GetTypeInfo().GetCustomAttribute<EntityBindAttribute>().Type;
+                var memberProperty = prop.GetCustomAttribute<PropertyBindAttribute>().Property;
+
+                var propertyNode = new LabelledTreeNode<object, Term>(new Variable());
+                propertyNode.AddChild(new Rdf("type"), memberType);
+
+                graph.AddChild(memberProperty, propertyNode);
+            }
+
+            return graph;
         }
     }
 }

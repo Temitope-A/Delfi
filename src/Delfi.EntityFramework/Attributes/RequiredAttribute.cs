@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Delfi.QueryProvider.Attributes
+namespace Delfi.EntityFramework.Attributes
 {
     /// <summary>
     /// Represents a required property of an entity

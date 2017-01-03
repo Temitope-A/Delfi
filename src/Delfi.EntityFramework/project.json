@@ -28,8 +28,8 @@
 
   "scripts": {
     "postcompile": [
-      "dotnet pack --output C:\\LibraryPackages --no-build --configuration %compile:Configuration%",
-      "robocopy bin\\Release C:\\LibraryPackages\\%project:Name% /E /MIR"
+      "dotnet pack --output \"\\\\\\jeeves\\Staff\\Temitope Ajileye\\LibraryPackages\" --no-build --configuration %compile:Configuration%",
+      "robocopy bin\\\\Release \"\\\\\\jeeves\\Staff\\Temitope Ajileye\\LibraryPackages\\%project:Name%\" /E /MIR"
     ]
   },
 

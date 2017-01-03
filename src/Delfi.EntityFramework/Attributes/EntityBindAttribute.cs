@@ -1,7 +1,7 @@
-﻿using Delfi.QueryProvider.RDF;
-using System;
+﻿using System;
+using Delfi.QueryProvider.RDF;
 
-namespace Delfi.QueryProvider.Attributes
+namespace Delfi.EntityFramework.Attributes
 {
     /// <summary>
     /// Represents an RDF type statement
