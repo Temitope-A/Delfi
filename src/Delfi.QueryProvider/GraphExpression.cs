@@ -115,6 +115,30 @@ namespace Delfi.QueryProvider
         }
 
         /// <summary>
+        /// Select
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="object"></param>
+        /// <returns></returns>
+        public GraphExpression Select(Resource property, Term @object)
+        {
+            var result = CreateJoinedMap(property, @object);
+            return new GraphExpression(new JoinMap(Map, result.Map, result.AddressPairList));
+        }
+
+        /// <summary>
+        /// Select
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public GraphExpression Select(Resource property, GraphExpression expression)
+        {
+            var result = CreateJoinedMap(property, expression);
+            return new GraphExpression(new JoinMap(Map, result.Map, result.AddressPairList));
+        }
+
+        /// <summary>
         /// Union
         /// </summary>
         /// <param name="graphExpression"></param>

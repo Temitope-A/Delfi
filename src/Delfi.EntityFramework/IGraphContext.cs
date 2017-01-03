@@ -1,17 +1,18 @@
-﻿using Delfi.QueryProvider;
-using Delfi.QueryProvider.RDF;
+﻿using Delfi.QueryProvider.RDF;
+using Sparql.Algebra.Trees;
+using System;
 
 namespace Delfi.EntityFramework
 {
     public interface IGraphContext
     {
+        IQueryableGraph<T> Read<T>();
+
         void Add(Resource resource);
 
-        void Append(Statement statement);
+        void Append(LabelledTreeNode<Resource, Resource> graph);
 
-        IQueryableGraph Read<T>();      
-
-        void Remove(Statement statement);
+        void Remove(LabelledTreeNode<Resource, Resource> graph);
 
         void SaveChanges();
     }

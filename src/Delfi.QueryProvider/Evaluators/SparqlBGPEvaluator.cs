@@ -6,26 +6,15 @@ using Sparql.Algebra.GraphEvaluators;
 using Sparql.Algebra.GraphSources;
 using Sparql.Algebra.RDF;
 using Sparql.Algebra.Trees;
-using System;
 using System.Collections.Generic;
 
 namespace Delfi.QueryProvider.Evaluators
 {
     /// <summary>
-    /// Sparql evatuator
+    /// Sparql evaluator
     /// </summary>
     public class SparqlBgpEvaluator:IEvaluator
     {
-        private readonly Guid _id;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public SparqlBgpEvaluator()
-        {
-            _id = Guid.NewGuid();
-        }
-
         /// <summary>
         /// Evaluates a graph query model against a graph source
         /// </summary>
@@ -46,7 +35,7 @@ namespace Delfi.QueryProvider.Evaluators
             }            
         }
 
-
+        //Converts a JSON sparql solution binding row into a graph result
         private LabelledTreeNode<object, Term> CreateResultGraph(Dictionary<string, Binding> solution, LabelledTreeNode<object, Term> queryModel)
         {
             TreeNodeVisitor<object, object> visitor = (object nodeData) => ResolveNode(nodeData, solution);
@@ -68,7 +57,6 @@ namespace Delfi.QueryProvider.Evaluators
             if (solutionSet.ContainsKey(inputNodeData.Id))
             {
                 object value = solutionSet[inputNodeData.Id].value;
-
                 return value;
             }
 

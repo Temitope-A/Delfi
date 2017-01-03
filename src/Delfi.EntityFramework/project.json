@@ -4,8 +4,15 @@
   "authors": [ "Temitope Ajileye" ],
   "language": "en-GB",
   "copyright": "MIT",
+  "brief": "Graph Database Entity Framework",
   "description": "Graph Database Entity Framework",
   "version": "0.1.0",
+  "versions": [
+    {
+      "Version": "0.1.0",
+      "Description": "Initial version"
+    }
+  ],
 
   "dependencies": {
     "Delfi.QueryProvider": {
@@ -21,13 +28,18 @@
 
   "scripts": {
     "postcompile": [
-      //"dotnet pack --no-build --configuration %compile:Configuration%"
-      "dotnet pack --output C:\\Users\\Temitope.A\\Documents\\LocalPackages --no-build --configuration %compile:Configuration%"
+      "dotnet pack --output C:\\LibraryPackages --no-build --configuration %compile:Configuration%",
+      "robocopy bin\\Release C:\\LibraryPackages\\%project:Name% /E /MIR"
     ]
   },
 
   "buildOptions": {
-    "xmlDoc": true
+    "xmlDoc": true,
+    "copyToOutput": {
+      "include": [
+        "project.json"
+      ]
+    }
   },
 
   "packOptions": {

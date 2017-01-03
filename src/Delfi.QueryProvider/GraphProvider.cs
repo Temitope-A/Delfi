@@ -7,34 +7,32 @@ using System.Collections.Generic;
 namespace Delfi.QueryProvider
 {
     /// <summary>
-    /// Graph provider
+    /// Base implementation of the IGraphProvider interface
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class GraphProvider<T>:IGraphProvider where T:IEvaluator, new()
     {
         /// <summary>
-        /// Map evaluator
+        /// Default Source
         /// </summary>
         public IGraphSource DefaultSource { get; }
 
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="source">default source</param>
         public GraphProvider(IGraphSource source)
         {
             DefaultSource = source;
         }
 
         /// <summary>
-        /// Executes the query codified in graphExpression
+        /// Execute the query codified in the graph expression on the source
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A collection of graph results that match the graph expression</returns>
         public IEnumerable<LabelledTreeNode<object, Term>> Execute(GraphExpression graphExpression, IGraphSource source = null)
         {
-            foreach (var result in graphExpression.Map.Evaluate<T>( source ?? DefaultSource))
-            {
-                yield return result;
-            }
+            return graphExpression.Map.Evaluate<T>(source ?? DefaultSource);
         }
     }
 }

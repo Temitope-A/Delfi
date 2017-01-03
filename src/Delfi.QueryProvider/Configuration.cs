@@ -43,9 +43,9 @@ namespace Delfi.QueryProvider
         /// <summary>
         /// Get the configured RDF namespaces
         /// </summary>
-        public List<NamespaceDeclaration> Namespaces {
+        public List<NamespaceDefinition> Namespaces {
             get {
-                var result = new List<NamespaceDeclaration>();
+                var result = new List<NamespaceDefinition>();
                 _configurationRoot.GetSection("namespaces").Bind(result);
 
                 return result;

@@ -18,16 +18,12 @@ namespace GraphRepository.Test.QueryProvider
             var graphSource = new GraphSource("http://localhost:7200/repositories/Pets");
             var graphProvider = new GraphProvider<SparqlBgpEvaluator>(graphSource);
 
-            var propertyGraph = new LabelledTreeNode<object, Term>(new Variable());
-            propertyGraph.AddChild(new Rdf("type"), new Rdf("Property"));
-
+            var propertyGraph = (new LabelledTreeNode<object, Term>(new Variable())).AddChild(new Rdf("type"), new Rdf("Property"));
             var query = new QueryableGraph(graphProvider, new GraphExpression(propertyGraph));
 
             int count = 0;
-            foreach (var item in query)
-            {
+            foreach (var item in query) {
                 count++;
-                Debug.WriteLine(item);
             }
             Assert.Equal(79, count);
         }
@@ -38,16 +34,12 @@ namespace GraphRepository.Test.QueryProvider
             var graphSource = new GraphSource("http://localhost:7200/repositories/Pets");
             var graphProvider = new GraphProvider<SparqlBgpEvaluator>(graphSource);
 
-            var classGraph = new LabelledTreeNode<object, Term>(new Variable());
-            classGraph.AddChild(new Rdfs("subClassOf"), new Variable());
-
+            var classGraph = (new LabelledTreeNode<object, Term>(new Variable())).AddChild(new Rdfs("subClassOf"), new Variable());
             var query = new QueryableGraph(graphProvider, new GraphExpression(classGraph));
 
             int count = 0;
-            foreach (var item in query)
-            {
+            foreach (var item in query) {
                 count++;
-                Debug.WriteLine(item);
             }
             Assert.Equal(291, count);
         }
@@ -58,13 +50,12 @@ namespace GraphRepository.Test.QueryProvider
             var graphSource = new GraphSource("http://localhost:7200/repositories/Pets");
             var graphProvider = new GraphProvider<SparqlBgpEvaluator>(graphSource);
 
-            var propertyGraph = new LabelledTreeNode<object, Term>(new Variable());
-            propertyGraph.AddChild(new Rdf("type"), new Rdf("Property"));
-
-            var classGraph = new LabelledTreeNode<object, Term>(new Variable());
-            classGraph.AddChild(new Rdfs("subClassOf"), new Variable());
-
+            var propertyGraph = (new LabelledTreeNode<object, Term>(new Variable()))
+                .AddChild(new Rdf("type"), new Rdf("Property"));
             var propertyQuery = new QueryableGraph(graphProvider, new GraphExpression(propertyGraph));
+
+            var classGraph = (new LabelledTreeNode<object, Term>(new Variable()))
+                .AddChild(new Rdfs("subClassOf"), new Variable());
             var classQuery = new QueryableGraph(graphProvider, new GraphExpression(classGraph));
 
             var query = propertyQuery.Require(new Rdfs("range"), classQuery);
@@ -84,13 +75,12 @@ namespace GraphRepository.Test.QueryProvider
             var graphSource = new GraphSource("http://localhost:7200/repositories/Pets");
             var graphProvider = new GraphProvider<SparqlBgpEvaluator>(graphSource);
 
-            var propertyGraph = new LabelledTreeNode<object, Term>(new Variable());
-            propertyGraph.AddChild(new Rdf("type"), new Rdf("Property"));
-
-            var classGraph = new LabelledTreeNode<object, Term>(new Variable());
-            classGraph.AddChild(new Rdfs("subClassOf"), new Variable());
-
+            var propertyGraph = (new LabelledTreeNode<object, Term>(new Variable()))
+                .AddChild(new Rdf("type"), new Rdf("Property"));
             var propertyQuery = new QueryableGraph(graphProvider, new GraphExpression(propertyGraph));
+
+            var classGraph = (new LabelledTreeNode<object, Term>(new Variable()))
+                .AddChild(new Rdfs("subClassOf"), new Variable());
             var classQuery = new QueryableGraph(graphProvider, new GraphExpression(classGraph));
 
             var query = propertyQuery.Expand(new Rdfs("range"), classQuery);

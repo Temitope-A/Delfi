@@ -4,8 +4,15 @@
   "authors": [ "Temitope Ajileye" ],
   "language": "en-GB",
   "copyright": "MIT",
+  "brief": "Graph Database Query Provider",
   "description": "Graph Database Query Provider",
   "version": "0.2.0",
+  "versions": [
+    {
+      "Version": "0.2.0",
+      "Description": "Initial version"
+    }
+  ],
 
   "dependencies": {
     "Microsoft.Extensions.Configuration": "1.0.0",
@@ -22,17 +29,22 @@
       "imports": "dnxcore50"
     }
   },
-  
+
 
   "scripts": {
     "postcompile": [
-      //"dotnet pack --no-build --configuration %compile:Configuration%"
-      "dotnet pack --output C:\\LibraryPackages --no-build --configuration %compile:Configuration%"
+      "dotnet pack --output C:\\LibraryPackages --no-build --configuration %compile:Configuration%",
+      "robocopy bin\\Release C:\\LibraryPackages\\%project:Name% /E /MIR"
     ]
   },
 
   "buildOptions": {
-    "xmlDoc": true
+    "xmlDoc": true,
+    "copyToOutput": {
+      "include": [
+        "project.json"
+      ]
+    }
   },
 
   "packOptions": {
