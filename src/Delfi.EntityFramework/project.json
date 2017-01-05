@@ -6,7 +6,7 @@
   "copyright": "MIT",
   "brief": "Graph Database Entity Framework",
   "description": "Graph Database Entity Framework",
-  "version": "0.1.0",
+  "version": "0.1.0-*",
   "versions": [
     {
       "Version": "0.1.0",
@@ -27,10 +27,8 @@
   },
 
   "scripts": {
-    "postcompile": [
-      "dotnet pack --output \"\\\\\\jeeves\\Staff\\Temitope Ajileye\\LibraryPackages\" --no-build --configuration %compile:Configuration%",
-      "robocopy bin\\\\Release \"\\\\\\jeeves\\Staff\\Temitope Ajileye\\LibraryPackages\\%project:Name%\" /E /MIR"
-    ]
+    "precompile": "dotnet restore",
+    "postcompile": "publish.bat %compile:Configuration% %project:Name%"
   },
 
   "buildOptions": {
