@@ -31,7 +31,7 @@ namespace Delfi.QueryProvider
         /// <summary>
         /// Public constructor with constant initializer
         /// </summary>
-        public GraphExpression(Term root)
+        public GraphExpression(Resource root)
         {
             Root = root;
             Map = new ConstantMap(new LabelledTreeNode<object, Term>(root));

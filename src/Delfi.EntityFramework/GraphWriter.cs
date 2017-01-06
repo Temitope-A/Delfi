@@ -1,61 +1,57 @@
-﻿using Delfi.QueryProvider.EndPointClients;
-using Delfi.QueryProvider.RDF;
+﻿using Delfi.QueryProvider.Writers;
 using Sparql.Algebra.GraphSources;
-using System.Collections.Generic;
-using System.Linq;
+using Sparql.Algebra.RDF;
+using Sparql.Algebra.Trees;
 
 namespace Delfi.EntityFramework
 {
     /// <summary>
-    /// Graph Writer
+    /// Base implementation of a IGraphWriter, enables manipulation of labelled graphs
     /// </summary>
     public class GraphWriter : IGraphWriter
     {
         /// <summary>
-        /// Map evaluator
+        /// Default source
         /// </summary>
         public IGraphSource DefaultSource { get; }
 
+        /// <summary>
+        /// Update client
+        /// </summary>
         protected UpdateClient Client { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the GraphWriter class
+        /// </summary>
+        /// <param name="source"></param>
         public GraphWriter(IGraphSource source)
         {
             DefaultSource = source;
             Client = new UpdateClient();
         }
 
-        public void Delete(IEnumerable<Statement> statements)
+        /// <summary>
+        /// Removes a graph portion from the repository
+        /// </summary>
+        public void Delete(LabelledTreeNode<object, Term> graph)
         {
-            if (statements.Any())
-            {
-                var body = "";
+            var body = SparqlBgpWriter.ConvertQueryModelToSparql(graph);
 
-                foreach (var item in statements)
-                {
-                    body += " " + item.ToString() + ".";
-                }
+            var query = $"DELETE DATA {{{body}}}";
 
-                var query = $"DELETE DATA {{{body}}}";
-
-                Client.ExecuteQuery(query, DefaultSource.EndPoint);
-            }
+            Client.ExecuteQuery(query, DefaultSource.EndPoint);
         }
 
-        public void Insert(IEnumerable<Statement> statements)
+        /// <summary>
+        /// Adds a graph portion to the repository
+        /// </summary>
+        public void Insert(LabelledTreeNode<object, Term> graph)
         {
-            if (statements.Any())
-            {
-                var body = "";
+            var body = SparqlBgpWriter.ConvertQueryModelToSparql(graph);
 
-                foreach (var item in statements)
-                {
-                    body += " " + item.ToString() + ".";
-                }
+            var query = $"INSERT DATA {{{body}}}";
 
-                var query = $"INSERT DATA {{{body}}}";
-
-                Client.ExecuteQuery(query, DefaultSource.EndPoint);
-            }
+            Client.ExecuteQuery(query, DefaultSource.EndPoint);
         }
     }
 }

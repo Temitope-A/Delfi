@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "Delfi.EntityFramework",
   "title": "Delfi EntityFramework",
   "authors": [ "Temitope Ajileye" ],
@@ -17,7 +17,8 @@
   "dependencies": {
     "Delfi.QueryProvider": {
       "target": "project"
-    }
+    },
+    "System.Reflection.Extensions": "4.0.1"
   },
 
   "frameworks": {

@@ -1,13 +1,18 @@
-﻿using Delfi.QueryProvider;
+﻿using Delfi.EntityFramework.Attributes;
+using Delfi.EntityFramework.Extensions;
+using Delfi.QueryProvider;
 using Delfi.QueryProvider.Evaluators;
 using Delfi.QueryProvider.RDF;
-using System.Collections.Generic;
+using Delfi.QueryProvider.StandardNamespaces;
+using Sparql.Algebra.RDF;
+using Sparql.Algebra.Trees;
 using System;
+using System.Reflection;
 
 namespace Delfi.EntityFramework
 {
     /// <summary>
-    /// A simple read and write context
+    /// A simple read and write context with no im memory persistence
     /// </summary>
     public class GraphContext : IGraphContext
     {
@@ -21,10 +26,6 @@ namespace Delfi.EntityFramework
         /// </summary>
         protected IGraphWriter GraphWriter { get; }
 
-        private List<Statement> _toAdd { get; }
-
-        private List<Statement> _toDelete { get; }
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -32,55 +33,95 @@ namespace Delfi.EntityFramework
         {
             GraphProvider = new GraphProvider<SparqlBgpEvaluator>(Configuration.Instance.QueryEndpoint);
             GraphWriter = new GraphWriter(Configuration.Instance.UpdateEndpoint);
-            _toAdd = new List<Statement>();
-            _toDelete = new List<Statement>();
-        }
-
-        public void Add(Resource resource)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Append a statement
-        /// </summary>
-        /// <param name="statement"></param>
-        public void Append(Statement statement)
-        {
-            _toAdd.Add(statement);
-            _toDelete.Remove(statement);
         }
 
         /// <summary>
         /// Returns a queryable graph
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public IQueryableGraph Read<T>()
+        /// <returns>a TypedQueryableGraph</returns>
+        public ITypedQueryableGraph Select<T>() where T : Resource
         {
-            return new QueryableGraph(GraphProvider, new GraphExpression(new Variable(typeof(T))));
+            return (new TypedQueryableGraph(GraphProvider)).Select<T>();
         }
 
         /// <summary>
-        /// Removes a statement
+        /// Adds a typed object to the graph
         /// </summary>
-        /// <param name="statement"></param>
-        public void Remove(Statement statement)
+        public void Add(Resource resource)
         {
-            _toDelete.Add(statement);
-            _toAdd.Remove(statement);
+            var graph = CreateObjectGraph(resource);
+            Append(graph);
         }
 
         /// <summary>
-        /// Write additions and removal
+        /// Appends a graph
         /// </summary>
-        public void SaveChanges()
+        public void Append(LabelledTreeNode<object, Term> graph)
         {
-            GraphWriter.Delete(_toDelete);
-            GraphWriter.Insert(_toAdd);
+            GraphWriter.Insert(graph);
+        }
 
-            _toDelete.Clear();
-            _toAdd.Clear();
+        /// <summary>
+        /// Removes a graph
+        /// </summary>
+        public void Remove(LabelledTreeNode<object, Term> graph)
+        {
+            GraphWriter.Delete(graph);
+        }
+
+        private LabelledTreeNode<object, Term> CreateObjectGraph(Resource resource)
+        {
+            var graph = new LabelledTreeNode<object, Term>(new Resource(resource.Id));
+            var objectType = resource.GetType();
+
+            var resourceAttribute = objectType.GetTypeInfo().GetCustomAttribute<EntityBindAttribute>();
+            if (resourceAttribute != null)
+            {
+                graph.AddChild(new Rdf("type"), resourceAttribute.Type);
+            }
+
+            foreach (var member in objectType.GetRuntimeProperties())
+            {
+                var memberAttribute = member.GetCustomAttribute<PropertyBindAttribute>();
+                if (memberAttribute != null)
+                {
+                    Type relevantType;
+                    if (member.PropertyType.IsListType())
+                    {
+                        relevantType = member.PropertyType.GenericTypeArguments[0];
+                        var countMember = member.PropertyType.GetRuntimeProperty("Count");
+                        var removeMethod = member.PropertyType.GetRuntimeMethod("Remove", new Type[] { });
+
+                        while ((int)countMember.GetValue(member.GetValue(resource)) > 0)
+                        {
+                            var obj = removeMethod.Invoke(member.GetValue(resource), new object[] { });
+                            AddChildToGraph(graph, obj, relevantType, memberAttribute.Property);
+                        }
+                    }
+                    else
+                    {
+                        relevantType = member.PropertyType;
+                        var obj = member.GetValue(resource);
+                        AddChildToGraph(graph, obj, relevantType, memberAttribute.Property);
+                    }
+                }
+            }
+            return graph;
+        }
+
+        private void AddChildToGraph(LabelledTreeNode<object, Term> graph, object obj, Type objType, Resource property)
+        {
+            if (typeof(Resource).GetTypeInfo().IsAssignableFrom(objType))
+            {
+                var memberGraph = CreateObjectGraph((Resource)obj);
+                graph.AddChild(property, memberGraph);
+            }
+            else
+            {
+                var value = obj;
+                graph.AddChild(property, value);
+            }
         }
     }
 }

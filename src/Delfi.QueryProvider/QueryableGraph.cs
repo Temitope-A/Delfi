@@ -126,7 +126,7 @@ namespace Delfi.QueryProvider
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through a collection.
+        /// Returns an enumerator that iterates through the collection of results.
         /// </summary>
         /// <returns>
         /// An System.Collections.IEnumerator object that can be used to iterate through the collection.

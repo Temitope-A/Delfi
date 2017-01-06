@@ -1,12 +1,21 @@
-﻿using Delfi.QueryProvider.RDF;
-using System.Collections.Generic;
+﻿using Sparql.Algebra.RDF;
+using Sparql.Algebra.Trees;
 
 namespace Delfi.EntityFramework
 {
+    /// <summary>
+    /// Enables manipulation of labelled graphs
+    /// </summary>
     public interface IGraphWriter
     {
-        void Insert(IEnumerable<Statement> statements);
+        /// <summary>
+        /// Removes a graph portion from the repository
+        /// </summary>
+        void Delete(LabelledTreeNode<object, Term> graph);
 
-        void Delete(IEnumerable<Statement> statements);
+        /// <summary>
+        /// Adds a graph portion to the repository
+        /// </summary>
+        void Insert(LabelledTreeNode<object, Term> graph);
     }
 }
