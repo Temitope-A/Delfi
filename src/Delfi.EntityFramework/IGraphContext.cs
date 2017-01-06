@@ -1,4 +1,5 @@
-﻿using Delfi.QueryProvider.RDF;
+﻿using Delfi.EntityFramework.Filters;
+using Delfi.QueryProvider.RDF;
 using Sparql.Algebra.RDF;
 using Sparql.Algebra.Trees;
 
@@ -14,7 +15,7 @@ namespace Delfi.EntityFramework
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>a TypedQueryableGraph</returns>
-        ITypedQueryableGraph Select<T>() where T:Resource;
+        ITypedQueryableGraph Select<T>(IFilterGenerator<T> filterGenerator = null) where T:Resource;
 
         /// <summary>
         /// Adds a typed object to the graph

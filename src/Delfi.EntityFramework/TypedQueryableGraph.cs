@@ -9,6 +9,7 @@ using Sparql.Algebra.RDF;
 using System.Linq;
 using System.Collections;
 using Delfi.EntityFramework.Extensions;
+using Delfi.EntityFramework.Filters;
 
 namespace Delfi.EntityFramework
 {
@@ -33,9 +34,6 @@ namespace Delfi.EntityFramework
         /// <summary>
         /// Initializes a new instance of a QueryableGraph &lt;T&gt; class, for internal usage
         /// </summary>
-        /// <param name="graphProvider"></param>
-        /// <param name="graphExpression"></param>
-        /// <param name="typeGraph"></param>
         private TypedQueryableGraph(IGraphProvider graphProvider, GraphExpression graphExpression, LabelledTreeNode<Type, Term> typeGraph) : base(graphProvider, graphExpression)
         {
             TypeGraph = typeGraph;
@@ -48,10 +46,11 @@ namespace Delfi.EntityFramework
         /// </summary>
         /// <typeparam name="Y">type of expansion</typeparam>
         /// <param name="property">property along which to expand</param>
+        /// <param name="filterGenerator">a filter generator to restrict results</param>
         /// <returns>a TypedQueryableGraph</returns>
-        public ITypedQueryableGraph Expand<Y>(Resource property) where Y : Resource
+        public ITypedQueryableGraph Expand<Y>(Resource property, IFilterGenerator<Y> filterGenerator = null) where Y : Resource
         {
-            var expansion = Select<Y>();
+            var expansion = Select<Y>(filterGenerator);
             var typeGraph = TypeGraph.Copy().AddChild(property, expansion.TypeGraph);
             var query = Expand(property, expansion);
 
@@ -64,10 +63,11 @@ namespace Delfi.EntityFramework
         /// </summary>
         /// <typeparam name="Y">type of expansion</typeparam>
         /// <param name="property">property along which to expand</param>
+        /// <param name="filterGenerator">a filter generator to restrict results</param>
         /// <returns>a TypedQueryableGraph</returns>
-        public ITypedQueryableGraph Require<Y>(Resource property) where Y : Resource
+        public ITypedQueryableGraph Require<Y>(Resource property, IFilterGenerator<Y> filterGenerator = null) where Y : Resource
         {
-            var expansion = Select<Y>();
+            var expansion = Select<Y>(filterGenerator);
             var typeGraph =TypeGraph.Copy().AddChild(property, expansion.TypeGraph);
             var query = Require(property, expansion);
 
@@ -80,10 +80,11 @@ namespace Delfi.EntityFramework
         /// </summary>
         /// <typeparam name="Y">type of query</typeparam>
         /// <param name="property">property along which to expand</param>
+        /// <param name="filterGenerator">a filter generator to restrict results</param>
         /// <returns>a TypedQueryableGraph</returns>
-        public ITypedQueryableGraph Select<Y>(Resource property) where Y : Resource
+        public ITypedQueryableGraph Select<Y>(Resource property, IFilterGenerator<Y> filterGenerator = null) where Y : Resource
         {
-            var expansion = Select<Y>();
+            var expansion = Select<Y>(filterGenerator);
             var query = Select(property, expansion);
             return new TypedQueryableGraph(GraphProvider, query.GraphExpression, new LabelledTreeNode<Type, Term>(typeof(Y)));
         }
@@ -92,11 +93,14 @@ namespace Delfi.EntityFramework
         /// Start of a query, returns objects of the specified type
         /// </summary>
         /// <typeparam name="Y">type of query</typeparam>
+        /// <param name="filterGenerator">a filter generator to restrict results</param>
         /// <returns>a TypedQueryableGraph</returns>
-        public ITypedQueryableGraph Select<Y>() where Y : Resource
+        public ITypedQueryableGraph Select<Y>(IFilterGenerator<Y> filterGenerator = null) where Y : Resource
         {
             var objectGraph = ConvertTypeToGraph(typeof(Y));
-            return new TypedQueryableGraph(GraphProvider, new GraphExpression(objectGraph), new LabelledTreeNode<Type, Term>(typeof(Y)));
+            var filter = filterGenerator != null ? filterGenerator.Generate(objectGraph) : null;
+
+            return new TypedQueryableGraph(GraphProvider, new GraphExpression(objectGraph, filter), new LabelledTreeNode<Type, Term>(typeof(Y)));
         }
 
         /// <summary>

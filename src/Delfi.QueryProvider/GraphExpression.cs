@@ -1,5 +1,6 @@
 ﻿using Delfi.QueryProvider.RDF;
 using Sparql.Algebra;
+using Sparql.Algebra.Filters;
 using Sparql.Algebra.Maps;
 using Sparql.Algebra.RDF;
 using Sparql.Algebra.Trees;
@@ -40,10 +41,10 @@ namespace Delfi.QueryProvider
         /// <summary>
         /// Public constructor with query model initializer
         /// </summary>
-        public GraphExpression(LabelledTreeNode<object, Term> queryModel)
+        public GraphExpression(LabelledTreeNode<object, Term> queryModel, IFilter filter = null)
         {
             Root = (Term)queryModel.Value;
-            Map = new BgpMap(queryModel);
+            Map = new BgpMap(queryModel, filter: filter);
         }
 
         /// <summary>

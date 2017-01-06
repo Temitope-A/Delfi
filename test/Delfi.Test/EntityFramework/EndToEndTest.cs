@@ -1,5 +1,6 @@
 ﻿using Delfi.EntityFramework;
 using Delfi.EntityFramework.Attributes;
+using Delfi.EntityFramework.Filters;
 using Delfi.QueryProvider.RDF;
 using Delfi.QueryProvider.StandardNamespaces;
 using Sparql.Algebra.RDF;
@@ -40,6 +41,22 @@ namespace GraphRepository.Test.EntityFramework
             }
 
             Assert.Equal(181, i);
+        }
+
+        [Fact]
+        public void FilteredQuery()
+        {
+            IGraphContext context = new GraphContext();
+
+            var query = context.Select<RdfProperty>(Filter<RdfProperty>.Regex(x => x.Id, "complementOf$")).Require<RdfClass>(new Rdfs("range"));
+
+            int i = 0;
+            foreach (var item in query)
+            {
+                i++;
+            }
+
+            Assert.Equal(1, i);
         }
 
         [Fact]

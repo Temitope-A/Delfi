@@ -1,4 +1,5 @@
-﻿using Delfi.QueryProvider;
+﻿using Delfi.EntityFramework.Filters;
+using Delfi.QueryProvider;
 using Delfi.QueryProvider.RDF;
 using Sparql.Algebra.RDF;
 using Sparql.Algebra.Trees;
@@ -23,8 +24,9 @@ namespace Delfi.EntityFramework
         /// </summary>
         /// <typeparam name="Y">type of expansion</typeparam>
         /// <param name="property">property along which to expand</param>
+        /// <param name="filterGenerator">a filter generator to restrict results</param>
         /// <returns>a TypedQueryableGraph</returns>
-        ITypedQueryableGraph Expand<Y>(Resource property) where Y:Resource;
+        ITypedQueryableGraph Expand<Y>(Resource property, IFilterGenerator<Y> filterGenerator = null) where Y:Resource;
 
         /// <summary>
         /// Expands the graph expression along the specified property.
@@ -32,8 +34,9 @@ namespace Delfi.EntityFramework
         /// </summary>
         /// <typeparam name="Y">type of expansion</typeparam>
         /// <param name="property">property along which to expand</param>
+        /// <param name="filterGenerator">a filter generator to restrict results</param>
         /// <returns>a TypedQueryableGraph</returns>
-        ITypedQueryableGraph Require<Y>(Resource property) where Y : Resource;
+        ITypedQueryableGraph Require<Y>(Resource property, IFilterGenerator<Y> filterGenerator = null) where Y : Resource;
 
         /// <summary>
         /// Expands the graph expression along the specified property, but returns only the terminal type
@@ -41,14 +44,15 @@ namespace Delfi.EntityFramework
         /// </summary>
         /// <typeparam name="Y">type of query</typeparam>
         /// <param name="property">property along which to expand</param>
+        /// <param name="filterGenerator">a filter generator to restrict results</param>
         /// <returns>a TypedQueryableGraph</returns>
-        ITypedQueryableGraph Select<Y>(Resource property) where Y : Resource;
+        ITypedQueryableGraph Select<Y>(Resource property, IFilterGenerator<Y> filterGenerator = null) where Y : Resource;
 
         /// <summary>
         /// New query, returns objects of the specified type
         /// </summary>
         /// <typeparam name="Y">type of query</typeparam>
         /// <returns>a TypedQueryableGraph</returns>
-        ITypedQueryableGraph Select<Y>() where Y : Resource;
+        ITypedQueryableGraph Select<Y>(IFilterGenerator<Y> filterGenerator = null) where Y : Resource;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Delfi.EntityFramework.Attributes;
 using Delfi.EntityFramework.Extensions;
+using Delfi.EntityFramework.Filters;
 using Delfi.QueryProvider;
 using Delfi.QueryProvider.Evaluators;
 using Delfi.QueryProvider.RDF;
@@ -40,9 +41,9 @@ namespace Delfi.EntityFramework
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>a TypedQueryableGraph</returns>
-        public ITypedQueryableGraph Select<T>() where T : Resource
+        public ITypedQueryableGraph Select<T>(IFilterGenerator<T> filterGenerator = null) where T : Resource
         {
-            return (new TypedQueryableGraph(GraphProvider)).Select<T>();
+            return (new TypedQueryableGraph(GraphProvider)).Select<T>(filterGenerator);
         }
 
         /// <summary>

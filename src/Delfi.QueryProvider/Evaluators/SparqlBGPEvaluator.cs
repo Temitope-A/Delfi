@@ -2,6 +2,7 @@
 using Delfi.QueryProvider.EndPointClients.SparqlJson;
 using Delfi.QueryProvider.RDF;
 using Delfi.QueryProvider.Writers;
+using Sparql.Algebra.Filters;
 using Sparql.Algebra.GraphEvaluators;
 using Sparql.Algebra.GraphSources;
 using Sparql.Algebra.RDF;
@@ -21,11 +22,12 @@ namespace Delfi.QueryProvider.Evaluators
         /// <param name="queryModel">tree model of the query</param>
         /// <param name="offset">number of solutions to skip</param>
         /// <param name="limit">maximum number of solutions to take</param>
+        /// <param name="filter">a bgp filter</param>
         /// <param name="source">query target</param>
         /// <returns>A collection of trees</returns>
-        public IEnumerable<LabelledTreeNode<object, Term>> Evaluate(LabelledTreeNode<object, Term> queryModel, int? offset, int? limit, IGraphSource source)
+        public IEnumerable<LabelledTreeNode<object, Term>> Evaluate(LabelledTreeNode<object, Term> queryModel, int? offset, int? limit, IFilter filter, IGraphSource source)
         {
-            var queryString = SparqlBgpWriter.Write(queryModel, offset, limit);
+            var queryString = SparqlBgpWriter.Write(queryModel, offset, limit, filter);
             var client = new SparqlJsonClient();
             var responseModel = client.ExecuteQuery(queryString, source.EndPoint);
 
