@@ -116,9 +116,9 @@ namespace Delfi.EntityFramework
         /// <summary>
         /// Create a graph of typed objects using the type graph as a model
         /// </summary>
-        private object TypifyGraph(LabelledTreeNode<object, Term> objectGraph, LabelledTreeNode<Type, Term> typeGraph)
+        private LabelledTreeNode<object, Term> TypifyGraph(LabelledTreeNode<object, Term> objectGraph, LabelledTreeNode<Type, Term> typeGraph)
         {
-            var obj = ConvertGraphToTypedObject(objectGraph, typeGraph.Data);
+            var obj = ConvertGraphToTypedObject(objectGraph, typeGraph.Value);
             var typedGraph = new LabelledTreeNode<object, Term>(obj);
 
             foreach (var outEdge in typeGraph.Children)
@@ -142,18 +142,18 @@ namespace Delfi.EntityFramework
         {
             if (objectGraph.Children.Count == 0)
             {
-                if (type.GetTypeInfo().IsAssignableFrom(objectGraph.Data.GetType()))
+                if (type.GetTypeInfo().IsAssignableFrom(objectGraph.Value.GetType()))
                 {
-                    return objectGraph.Data;
+                    return objectGraph.Value;
                 }
                 else
                 {
-                    throw new InvalidCastException(string.Format("Cannot cast a {0} to a {1}", objectGraph.Data.GetType(), type));
+                    throw new InvalidCastException(string.Format("Cannot cast a {0} to a {1}", objectGraph.Value.GetType(), type));
                 }
             }
 
             //here we use the fact that expansion types inherit from Resource
-            var obj = Activator.CreateInstance(type, new[] { objectGraph.Data});
+            var obj = Activator.CreateInstance(type, new[] { objectGraph.Value});
 
             foreach (var member in type.GetRuntimeProperties())
             {
@@ -169,7 +169,7 @@ namespace Delfi.EntityFramework
 
                         foreach (var memberObjectGraph in memberObjectGraphCollection)
                         {
-                            addMethod.Invoke(typedList, new[] { ConvertGraphToTypedObject(memberObjectGraph, member.PropertyType)});
+                            addMethod.Invoke(typedList, new[] { ConvertGraphToTypedObject(memberObjectGraph, member.PropertyType.GenericTypeArguments[0]) });
                         }
                         member.SetValue(obj, typedList);
                     }

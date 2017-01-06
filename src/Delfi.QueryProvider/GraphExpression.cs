@@ -42,7 +42,7 @@ namespace Delfi.QueryProvider
         /// </summary>
         public GraphExpression(LabelledTreeNode<object, Term> queryModel)
         {
-            Root = (Term)queryModel.Data;
+            Root = (Term)queryModel.Value;
             Map = new BgpMap(queryModel);
         }
 

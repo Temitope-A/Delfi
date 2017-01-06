@@ -36,6 +36,15 @@ namespace Delfi.QueryProvider.RDF
         }
 
         /// <summary>
+        /// Returns true if two resources have the same iri
+        /// </summary>
+        /// <param name="obj"></param>
+        public override bool Equals(object obj)
+        {
+            return Id == ((Resource)obj).Id;
+        }
+
+        /// <summary>
         /// Full string representation of the resource
         /// </summary>
         /// <returns></returns>
